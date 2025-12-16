@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lower Extremity MCQ Quiz</title>
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#121212;
+  font-family:Arial, sans-serif;
+  color:#fff;
+}
+.container{
+  background:#1e1e1e;
+  width:90%;
+  max-width:800px;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 0 15px #000;
+}
+h1{text-align:center;color:#00c3ff; margin-bottom: 10px;}
+.progress-container {
+  width: 100%;
+  background-color: #333;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+#progressBar {
+  width: 0%;
+  height: 10px;
+  background-color: #00c3ff;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+.option{
+  background:#2c2c2c;
+  padding:12px;
+  border-radius:10px;
+  margin:8px 0;
+  cursor:pointer;
+  transition: 0.2s;
+  border: 1px solid transparent;
+}
+.option:hover{background:#3a3a3a; border-color: #444;}
+.correct{background:#2e7d32!important; border-color: #4caf50!important;}
+.wrong{background:#c62828!important; border-color: #ef5350!important;}
+.disabled{pointer-events:none;}
+#progress-text{text-align:center;margin-top:10px;color:#aaa; font-size: 0.9em;}
+
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+}
+button {
+  background:#00c3ff;
+  border:none;
+  color:#fff;
+  padding:12px 20px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight: bold;
+}
+button:hover{background:#009ad6;}
+button:disabled {
+  background: #444;
+  cursor: not-allowed;
+}
+.reset-btn {
+  width: 100%;
+  margin-top: 15px;
+  background: #333;
+}
+#scoreCard{display:none;text-align:center;}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>Lower Extremity MCQ Quiz</h1>
+  
+  <div class="progress-container">
+    <div id="progressBar"></div>
+  </div>
+
+  <div id="quiz">
+    <div id="question" style="font-size: 1.1em; margin-bottom: 15px; min-height: 60px;"></div>
+    <div id="options"></div>
+    <div id="progress-text"></div>
+    
+    <div class="nav-buttons">
+      <button id="prevBtn" onclick="prevQuestion()">← Previous</button>
+      <button id="nextBtn" onclick="nextQuestion()">Next →</button>
+    </div>
+    <button class="reset-btn" onclick="resetQuiz()">Reset Quiz</button>
+  </div>
+
+  <div id="scoreCard">
+    <h2 id="finalScore"></h2>
+    <p id="scoreDetails"></p>
+    <button onclick="resetQuiz()" style="width: 100%;">Restart Quiz</button>
+  </div>
+</div>
+
+<script>
+const quizData = [
+{q:"1. The following apply to anteromedial rotatory instability of the knee, EXCEPT:",o:["Anterior subluxation of the medial tibial condyle occurs with anteromedial rotatory subluxation","May be accentuated by a tear of the anterior cruciate ligament","Occurs with tears of the medial and lateral compartment ligaments","Result of abduction stress test is positive with the knee at 30 degrees of flexion as the result of the anterior drawer test with the tibia externally rotated","Occurs with a tear of the medial compartment ligament including the posterior oblique ligament"],a:2},
+{q:"2. This gait determinant reduces the vertical rise of the center of gravity and is compensated by increased knee and ankle flexion:",o:["Pelvic list","Lateral displacement of the pelvis","Knee, ankle and foot rotation","Pelvic rotation","Knee flexion in stance"],a:0},
+{q:"3. This test flexes the knee fully and allows it to extend with sharp end points to evaluate lack of full knee extension:",o:["Distraction test","Apprehension test","Patellofemoral grinding test","McMurray test","Bounce Home test"],a:4},
+{q:"4. The normal neck shaft angle is:",o:["115 degrees","130 degrees","125 degrees","120 degrees","110 degrees"],a:2},
+{q:"5. The following statements are true of the stance phase of gait, EXCEPT:",o:["A spike of bone on the medial tubercle of the calcaneus may cause avoidance of heel strike","Weak gluteus maximus causes posterior thrust of thorax","Flatfooted gait results from plantarflexor weakness","Problems in stance phase cause antalgic gait","Weakened gluteus medius causes forward lurch"],a:4},
+{q:"6. Functions of the pretibial group, EXCEPT:",o:["Anterior tibialis is the primary dorsiflexor of the ankle","Paralysis results in drop foot during swing phase","Important in open-chain motions such as foot placement","Open-chain motions require a lot of muscle force due to poor leverage"],a:3},
+{q:"7. The security of the ankle joint is due to immobility of which joint:",o:["Superior tibiofibular joint","Inferior tibiofibular joint","Subtalar joint","Calcaneocuboid joint"],a:1},
+{q:"8. In this foot deformity, the heel is off the ground:",o:["Pes Equinus","Pes Calcaneus","Pes Cavus","Pes Varus"],a:0},
+{q:"9. The following are true of the patella, EXCEPT:",o:["Increases pressure and distributes forces on the femur","Prevents damaging forces on quadriceps tendon","Increases leverage of quadriceps femoris","Provides bony protection to femoral condyles"],a:0},
+{q:"10. When the ankle is forcibly inverted and plantar flexed, which ligament is most frequently sprained?",o:["Deltoid ligament","Anterior talofibular ligament","Posterior talofibular ligament","Calcaneofibular ligament"],a:1},
+{q:"11. Severe bleeding from lateral distal thigh—where apply pressure?",o:["Behind the knee at popliteal fossa","At the femoral triangle","At the antecubital fossa","At mid-thigh over profunda femoris artery"],a:1},
+{q:"12. The ball of the foot corresponds to the:",o:["Sole of the foot","Heads of the metatarsals","Base of the metatarsals","Calcaneus"],a:1},
+{q:"13. In rising from sitting, the following muscles are active, EXCEPT:",o:["Iliopsoas","Gastrocnemius","Gluteus maximus","Quadriceps femoris"],a:0},
+{q:"14. This ligament does not contribute to hip joint stability:",o:["Ischiofemoral ligament","Ligamentum teres","Pubofemoral ligament","Iliofemoral ligament"],a:1},
+{q:"15. The most commonly injured ligament in ankle sprain:",o:["Anterior talofibular ligament","Anterior tibiofibular ligament","Medial deltoid ligament","Calcaneofibular ligament"],a:0},
+{q:"16. Blood supply of posterior thigh muscles mainly from:",o:["Popliteal artery","Inferior gluteal artery","Profunda femoris artery","Femoral artery"],a:2},
+{q:"17. Normal width of walking base:",o:["5–6 inches","2–4 inches","1–2 inches","1 foot"],a:1},
+{q:"18. Hip flexion limited due to passive insufficiency of:",o:["Gluteus maximus","Iliopsoas","Hamstrings","Rectus femoris"],a:2},
+{q:"19. Axis for subtalar abduction and adduction:",o:["Transverse","Longitudinal","Oblique","Vertical"],a:2},
+{q:"20. Average total ROM for knee axial rotation:",o:["40 degrees","60 degrees","90 degrees","20 degrees"],a:0},
+{q:"21. A stab wound to popliteal fossa injures:",o:["Posterior tibial nerve","Popliteus muscle","Common peroneal nerve","Popliteal artery"],a:0},
+{q:"22. With paralysis of the gastrocsoleus:",o:["Secondary clubfoot likely","Difficulty in running and jumping","An AFO should always be prescribed","Deep posterior muscles substitute"],a:1},
+{q:"23. The soleus muscle:",o:["Contains higher proportion of slow twitch fibers","Most active prone with knee extended","Most effective only when knee extended","Equal activity with gastrocnemius in standing"],a:0},
+{q:"24. The hip hiking muscle:",o:["Quadratus lumborum","Iliopsoas","Transversus abdominis","Erector spinae"],a:0},
+{q:"25. Number of compartments in the lower leg:",o:["Three","Four","Two","Five"],a:1},
+{q:"26. The tibialis anterior:",o:["Is an effective toe extensor","Inverts only from everted to neutral","Is not capable of eversion","Is primarily a dorsiflexor and strong invertor"],a:3},
+{q:"27. The ACL is taut during:",o:["Full internal rotation","40–50 degrees knee flexion","Full knee extension","Knee adduction"],a:2},
+{q:"28. Muscle covering six external hip rotators:",o:["Biceps brachii","Pectoralis major","Subscapularis","Coracobrachialis","Gluteus maximus"],a:4},
+{q:"29. Load on each hip during standing:",o:["One third body weight","One fourth body weight","One fifth body weight","One half body weight"],a:3},
+{q:"30. Gluteus maximus peak activity occurs during:",o:["Late stance","Midstance","Early stance","Swing phase"],a:2},
+{q:"31. Course of the anterior cruciate ligament:",o:["Upward backward medial","Upward forward lateral","Upward forward medial","Upward backward lateral"],a:3},
+{q:"32. Most stable position of the hip:",o:["Externally rotated","Internally rotated","Adducted","Abducted"],a:3},
+{q:"33. Fracture of fibular neck injures:",o:["Saphenous nerve","Tibial nerve","Common peroneal nerve","Sural nerve"],a:2},
+{q:"34. During ankle dorsiflexion:",o:["Malleoli approximate","Tibiofibular ligaments become horizontal","Malleoli pulled inferiorly","Fibula laterally rotates"],a:3},
+{q:"35. Meniscal tears usually result from:",o:["Hyperextension","Hyperflexion","Rotation in full extension","Rotation in partial flexion"],a:3},
+{q:"36. Arm swing during walking occurs around:",o:["Horizontal axis","Vertical axis","Sagittal axis","Frontal axis"],a:3},
+{q:"37. Muscle lateral to pectineus:",o:["Rectus femoris","Adductor longus","Iliopsoas","Piriformis"],a:2},
+{q:"38. Saphenous nerve spinal level:",o:["L5","L3","L2","L4"],a:3},
+{q:"39. Largest branch of lumbar plexus:",o:["Ilioinguinal nerve","Genitofemoral nerve","Femoral nerve","Iliohypogastric nerve"],a:2},
+{q:"40. Most difficult task with bilateral quadriceps weakness:",o:["Running","Climbing stairs","Fast walking","Going downstairs"],a:3},
+{q:"41. Knee extension in newborn incomplete by:",o:["20 degrees","10 degrees","40 degrees","30 degrees"],a:0},
+{q:"42. Femur length relative to height:",o:["One fourth","One fifth","One sixth","One third"],a:0},
+{q:"43. Muscle compressing sciatic nerve:",o:["Rectus femoris","Quadratus femoris","Piriformis","Gluteus maximus"],a:2},
+{q:"44. Quadriceps action when sitting down:",o:["Isometric contraction","Eccentric contraction","Positive work","Concentric contraction"],a:1},
+{q:"45. During stance phase of gait:",o:["Increased gastrocsoleus activity","Increased quadriceps activity","Increased gluteus medius activity","All of these"],a:3},
+{q:"46. Plane of progression during ambulation:",o:["Horizontal plane","Frontal plane","Sagittal plane","Vertical plane"],a:2},
+{q:"47. Ground reaction force at heel strike extends:",o:["None of these","Behind the knee","In front of the knee","Through the knee"],a:1},
+{q:"48. Function of cruciate ligaments, EXCEPT:",o:["Limits rotational movement","Taut in all knee positions","Prevents anteroposterior displacement","None of these"],a:3},
+{q:"49. Lateral malleolus, EXCEPT:",o:["Extends further distally","More posterior than medial malleolus","Allows mortise to point 15 degrees laterally","Its distal extension prevents inversion sprains"],a:3},
+{q:"50. Muscle complementing PCL during knee bends:",o:["Gastrocnemius","Popliteus","Plantaris","Vastus medialis"],a:0}
+];
+
+let index = 0;
+let userAnswers = new Array(quizData.length).fill(null); 
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const progressTextEl = document.getElementById("progress-text");
+const progressBarEl = document.getElementById("progressBar");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+
+function load() {
+  if (index >= quizData.length) {
+    showScore();
+    return;
+  }
+
+  // Update Progress
+  let progressPct = ((index) / quizData.length) * 100;
+  progressBarEl.style.width = progressPct + "%";
+  progressTextEl.innerText = `Question ${index + 1} of ${quizData.length}`;
+
+  // Update Button States
+  prevBtn.disabled = index === 0;
+  nextBtn.innerText = index === quizData.length - 1 ? "Finish" : "Next →";
+
+  // Load Content
+  questionEl.innerText = quizData[index].q;
+  optionsEl.innerHTML = "";
+
+  quizData[index].o.forEach((text, i) => {
+    let div = document.createElement("div");
+    div.className = "option";
+    div.innerText = text;
+
+    // Check if user has already answered this question
+    if (userAnswers[index] !== null) {
+      div.classList.add("disabled");
+      if (i === quizData[index].a) div.classList.add("correct");
+      if (i === userAnswers[index] && i !== quizData[index].a) div.classList.add("wrong");
+    } else {
+      div.onclick = () => selectOption(i, div);
+    }
+    optionsEl.appendChild(div);
+  });
+}
+
+function selectOption(i, div) {
+  userAnswers[index] = i;
+  let opts = document.querySelectorAll(".option");
+  opts.forEach(o => o.classList.add("disabled"));
+
+  if (i === quizData[index].a) {
+    div.classList.add("correct");
+  } else {
+    div.classList.add("wrong");
+    opts[quizData[index].a].classList.add("correct");
+  }
+  
+  // Optional: Auto-advance after 1 second if you prefer, 
+  // but usually better to let user click "Next"
+}
+
+function nextQuestion() {
+  if (index < quizData.length - 1) {
+    index++;
+    load();
+  } else {
+    showScore();
+  }
+}
+
+function prevQuestion() {
+  if (index > 0) {
+    index--;
+    load();
+  }
+}
+
+function showScore() {
+  progressBarEl.style.width = "100%";
+  let score = 0;
+  userAnswers.forEach((ans, i) => {
+    if (ans === quizData[i].a) score++;
+  });
+
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("scoreCard").style.display = "block";
+  document.getElementById("finalScore").innerText = `Final Score: ${score} / ${quizData.length}`;
+  
+  let unanswered = userAnswers.filter(a => a === null).length;
+  document.getElementById("scoreDetails").innerText = unanswered > 0 
+    ? `You skipped ${unanswered} questions.` 
+    : `Great job completing all questions!`;
+}
+
+function resetQuiz() {
+  index = 0;
+  userAnswers = new Array(quizData.length).fill(null);
+  document.getElementById("quiz").style.display = "block";
+  document.getElementById("scoreCard").style.display = "none";
+  load();
+}
+
+load();
+</script>
+</body>
+</html>
